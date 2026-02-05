@@ -1155,18 +1155,46 @@ install_python_deps() {
         return 1
     fi
 
-    # Install python3-venv (version-specific package for Debian/Ubuntu)
-    # The generic python3-venv may not work, need python3.X-venv
-    local venv_pkg="python3-venv"
-    if [ "$PKG_MANAGER" = "apt" ]; then
-        # Get specific version like python3.12-venv
-        local pyver_full
-        pyver_full=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' 2>/dev/null)
-        if [ -n "$pyver_full" ]; then
-            venv_pkg="python${pyver_full}-venv"
-        fi
-    fi
-    install_package "$venv_pkg"
+    # Install venv support (varies by distro)
+    # - Debian/Ubuntu: needs python3-venv or python3.X-venv package
+    # - Fedora/RHEL/Arch/openSUSE: venv included with python3, just need pip
+    # - Alpine: needs py3-pip
+    case "$PKG_MANAGER" in
+        apt)
+            # Debian/Ubuntu needs python3-venv package (version-specific)
+            local pyver_full
+            pyver_full=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' 2>/dev/null)
+            if [ -n "$pyver_full" ]; then
+                install_package "python${pyver_full}-venv" || install_package "python3-venv"
+            else
+                install_package "python3-venv"
+            fi
+            ;;
+        dnf)
+            # Fedora/RHEL 8+: venv is included with python3, just ensure pip
+            install_package "python3-pip" || true
+            ;;
+        yum)
+            # Older RHEL/CentOS 7
+            install_package "python3-pip" || true
+            ;;
+        pacman)
+            # Arch Linux: venv included with python, pip is separate
+            install_package "python-pip" || true
+            ;;
+        zypper)
+            # openSUSE: venv included with python3
+            install_package "python3-pip" || true
+            ;;
+        apk)
+            # Alpine
+            install_package "py3-pip" || true
+            ;;
+        *)
+            # Try generic python3-venv, ignore if fails (venv may be built-in)
+            install_package "python3-venv" 2>/dev/null || true
+            ;;
+    esac
 
     # Create virtual environment
     local VENV_DIR="$INSTALL_DIR/venv"

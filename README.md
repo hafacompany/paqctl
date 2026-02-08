@@ -8,7 +8,7 @@
 ```
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/SamNet-dev/paqctl/releases)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE)
 [![Server](https://img.shields.io/badge/server-Linux-lightgrey.svg)](https://github.com/SamNet-dev/paqctl)
 [![Client](https://img.shields.io/badge/client-Windows%20%7C%20macOS%20%7C%20Linux-green.svg)](https://github.com/SamNet-dev/paqctl)
 
@@ -1146,7 +1146,7 @@ https://github.com/SamNet-dev/paqctl
 
 ## License
 
-MIT License - See [LICENSE](LICENSE) file.
+AGPL-3.0 License - See [LICENSE](LICENSE) file.
 
 ---
 
